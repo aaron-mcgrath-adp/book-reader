@@ -34,11 +34,12 @@ Now we can simply execute the resulting jar file like so;
 Simply type or copy/paste your file location into the file path field, then simply choose your method of splitting words.
 
 The program works by reading a file line, by line.  Each line is then split into "words", for which basic statistics are built up. 
-We have 3 methods that will take a line of text and strip the "words" from each line.
+We have 4 methods that will take a line of text and strip the "words" from each line.
 
 - Regex
 - String Split()
 - String Tokenizer
+- Custom
 
 Once selected and configured with the regex/tokens, simply hit the __Scan Book__ button.  Most of the available stats are shown on screen, but a further output dump can now be seen on the command line;
 ````
@@ -84,7 +85,21 @@ The tokenizer method will take a list of single character delimiters for which i
 ````
 ., !?
 ````
+
+### Custom
+
+The custom implementation will use a tokenizer splitter first, then attempt to clean the returned words, stripping them of any punctuation.
+Simply passing in a "space" as the token will get us some way there to clean spit words, but there are still some edge cases, such as hyphenated words or even web addresses.
+
 ## A few notes on usage
+
+Regex Java 1.8 vs Java 11.
+
+The strangest thing!  If you run the following regex implementation;
+````
+([A-Za-z0-9\/\&-]+)
+````
+Using Java 8, then it ignores the first word/character in the document.  Switch to Java 11 and voila!  Everything is fine again.  A bug?  A known update?
 
 Longer books can take a short while to process.  With a little more time, the GUI would give you some feedback that it is actually doing something, but right now, it does not, just be patient.
 
@@ -93,3 +108,12 @@ The basic regular expression shown;
 ([A-Za-z0-9\/\&-]+)
 ````
 Will catch most words including "&", but do you also consider "=" to be a word?  What about currency such as "£1.99".
+
+I assumed a tailored regular expression would do the job and allow for easier maintenance when new edge cases are found.  However, I've just seen a few sample regular expressions for validating formatted currency;
+````
+// Requires a decimal and commas ^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$ 
+// Allows a decimal, requires commas (?=.*\d)^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?(\.\d{1,2})?$ 
+// Decimal and commas optional (?=.*?\d)^\$?(([1-9]\d{0,2}(,\d{3})*)|\d+)?(\.\d{1,2})?$ 
+// Decimals required, commas optional ^\$?(([1-9]\d{0,2}(,\d{3})*)|0)?\.\d{1,2}$
+````
+And have since changed my mind, perhaps a pure Java custom implementation might be better.

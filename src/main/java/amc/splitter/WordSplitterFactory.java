@@ -20,6 +20,13 @@ public enum WordSplitterFactory {
     public WordSplitter createWordSplitter(String config) {
       return new TokenizerWordSplitter(config);
     }
+  },
+  
+  Custom {
+    @Override
+    public WordSplitter createWordSplitter(String config) {
+      return new CustomWordSplitter(config);
+    }
   };
   
   public abstract WordSplitter createWordSplitter(String config);

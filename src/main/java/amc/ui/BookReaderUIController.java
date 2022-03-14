@@ -114,6 +114,7 @@ public class BookReaderUIController extends AbstractController {
           System.out.println(readBook);
           updateScreenStats(readBook);
         } catch (Exception e) {
+          e.printStackTrace();
           Platform.runLater(() -> {
             errorText.setText(e.getMessage());
           });
